@@ -1,0 +1,29 @@
+# 오브젝트 버전 v1, app/v1, networking.k8s.io/v1, ...
+apiVersion: v1
+# 종류 Pod, ReplicaSet, Deployment, Service, ...
+kind: Pod
+# 메타데이터 name과 label, annotation(주석)으로 구성
+metadata:
+  name: echo
+  labels:
+    app: echo
+# 리소스 종류마다 다름
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/subicura/echo:v1
+      livenessProbe:
+        httpGet:
+          path: /not/exist
+          port: 8080
+        initialDelaySeconds: 5
+        timeoutseconds: 2 # Default 1
+        periodSeconds: 5 # Defaults 10
+        failureThreshold: 1 # Defaults 3
+      resources:
+        limits:
+          memory: 512Mi
+          cpu: '1'
+        requests:
+          memory: 256Mi
+          cpu: '0.2'
