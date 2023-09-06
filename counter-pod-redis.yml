@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter
+  labels:
+    app: counter
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/subicura/counter:latest
+      env:
+        - name: REDIS_HOST
+          value: 'localhost'
+    - name: db
+      image: redis
+# -c: container 이름 지정
+# kubectl exec -it counter -c app -- sh
+
