@@ -32,6 +32,7 @@ spec:
 # spec.ports.port: 서비스가 생성할 Port
 # spec.ports.targetPort: 서비스가 접근할 Pod의 Port. default: port
 # spec.selector: 서비스가 접근할 Pod의 label 조건
+# ClusterIP는 클러스터 내부에서만 접근 가능
 apiVersion: v1
 kind: Service
 metadata:
