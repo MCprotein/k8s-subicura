@@ -1,0 +1,45 @@
+# ClusterIP
+# 클러스터 내부에 새로운 IP를 할당하고,
+# 여러 개의 Pod을 바라보는 로드밸런서 기능 제공
+
+# 같은 클러스터에서 생성된 Pod을 접속할때 도메인, 네임스페이스 사용
+# redis.default.svc.cluster.local
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: counter
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: counter
+        tier: db
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+
+---
+# ClusterIP 서비스 설정
+# spec.ports.port: 서비스가 생성할 Port
+# spec.ports.targetPort: 서비스가 접근할 Pod의 Port. default: port
+# spec.selector: 서비스가 접근할 Pod의 label 조건
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+    - port: 6379
+      protocol: TCP
+  selector:
+    app: counter
+    tier: db
