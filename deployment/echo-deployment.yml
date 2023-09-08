@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-deploy
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: echo
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: echo
+        tier: app
+    spec:
+      containers:
+        - name: echo
+          image: ghcr.io/subicura/echo:v1
+# 히스토리 확인
+# kubectl rollout history deploy/echo-deploy
+
+# revision 1 히스토리 상세 확인
+# kubectl rollout history deploy/echo-deploy --revision=1
+
+# 바로 전으로 롤백
+# kubectl rollout undo deploy/echo-deploy
+
+# 특정 버전으로 롤백
+# kubectl rollout undo deploy/echo-deploy --to-revision=2
