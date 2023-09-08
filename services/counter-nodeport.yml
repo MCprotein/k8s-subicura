@@ -12,3 +12,6 @@ spec:
       protocol: TCP
       # 노드에 오픈할 Port (미지정시 30000~32768 랜덤 할당)
       nodePort: 31000
+  selector:
+    app: counter
+    tier: app
