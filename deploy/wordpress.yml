@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress:5.9.1-php8.1-apache
+          env:
+            - name: WORDPRESS_DB_HOST
+              # host는 db의 service 이름
+              value: mariadb-service
+            - name: WORDPRESS_DB_NAME
+              value: wordpress
+            - name: WORDPRESS_DB_USER
+              value: root
+            - name: WORDPRESS_DB_PASSWORD
+              value: password
+          ports:
+            - containerPort: 80
+              name: wordpress
+
+---
+# 접속 명령어: minikube service wordpress-nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-nodeport
+  labels:
+    app: wordpress
+spec:
+  type: NodePort
+  ports:
+    # targetPort 를 명시하지 않으면 port와 동일하게 설정된다. (default)
+    - port: 80
+      # nodePort를 30000으로 연다.
+      nodePort: 30000
+  selector:
+    app: wordpress
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10.7
+          env:
+            - name: MYSQL_DATABASE
+              value: wordpress
+            - name: MYSQL_ROOT_PASSWORD
+              value: password
+          ports:
+            - containerPort: 3306
+              name: mariadb
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+  labels:
+    app: mariadb
+spec:
+  ports:
+    # targetPort 를 명시하지 않으면 port와 동일하게 설정된다. (default)
+    - port: 3306
+  selector:
+    app: mariadb
